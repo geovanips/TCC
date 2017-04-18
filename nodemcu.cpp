@@ -1,5 +1,5 @@
 /***********************************************************/
-/*Alpha_01 Automacao de irrigacao TCC 1 10/04/2017         */
+/*Alpha_02 Automacao de irrigacao TCC 1 10/04/2017         */
 /*Teste de publicacao no thingspeak com o sensor de umidade*/
 /*Aluno:Geovani Pereira da Silva                           */
 /* http://blog.filipeflop.com/wireless/planta-iot-com-     */
@@ -9,12 +9,12 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 //Rede Wifi e Senha
-#define SSID_REDE     "PingoWifi"
-#define SENHA_REDE    "36082161"
+#define SSID_REDE     ""
+#define SENHA_REDE    ""
 //Define o intervalo de envio do thingspeak em milisegundos
 #define INTERVALO_ENVIO_THINGSPEAK  30000
 //Define pino de leitura do sensor de fluxo
-//#define WaterFlowSensor 14
+#define WaterFlowSensor 5
 //Define pino do rele
 #define rele 4
 //constantes e variáveis globais
@@ -22,6 +22,7 @@ char EnderecoAPIThingSpeak[] = "api.thingspeak.com";
 String ChaveEscritaThingSpeak = "D7QFC5Z4B1QEF4TX";
 long lastConnectionTime;
 WiFiClient client;
+float UmidadePercentual;
 
 //prototypes
 void EnviaInformacoesThingspeak(String StringDados);
@@ -33,8 +34,6 @@ ESP8266WebServer server(80);
 void PaginaWeb(void);
 void ControlRele(void);
 //float FazLeituraFluxo(void);
-//Variaveis globais
-float UmidadePercentual;
 /*
  * Implementações
  */
@@ -172,7 +171,14 @@ void GeraLeitura(void){
     (millis() - lastConnectionTime > INTERVALO_ENVIO_THINGSPEAK))
   {
       sprintf(FieldUmidade,"field1=%d",UmidadePercentualTruncada);
-      EnviaInformacoesThingspeak(FieldUmidade);
+      sprintf(FieldWaterSensor,"field2=%d",UmidadePercentualTruncada);
+      String postStr = ChaveEscritaThingSpeak;
+             postStr += "&amp;";
+             postStr += FieldUmidade;
+             postStr += "&amp;";
+             postStr += FieldWaterSensor;
+      EnviaInformacoesThingspeak(postStr);
+      Serial.println(postStr);
   }
 }
 
@@ -181,6 +187,11 @@ void setup()
     Serial.begin(9600);
     lastConnectionTime = 0;
     FazConexaoWiFi();
+    //Estados das portas
+    pinMode(rele, OUTPUT);
+    digitalWrite(rele, LOW);
+    pinMode(WaterFlowSensor, INPUT);
+    digitalWrite(WaterFlowSensor, HIGH);
     // Atribuindo urls para funções
     server.on("/", PaginaWeb);
     //inicia o server web
