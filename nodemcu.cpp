@@ -1,5 +1,5 @@
 /***********************************************************/
-/*Alpha_02 Automacao de irrigacao TCC 1 10/04/2017         */
+/*Alpha_03 Automacao de irrigacao TCC 1 19/04/2017         */
 /*Teste de publicacao no thingspeak com o sensor de umidade*/
 /*Aluno:Geovani Pereira da Silva                           */
 /* http://blog.filipeflop.com/wireless/planta-iot-com-     */
@@ -14,15 +14,16 @@
 //Define o intervalo de envio do thingspeak em milisegundos
 #define INTERVALO_ENVIO_THINGSPEAK  30000
 //Define pino de leitura do sensor de fluxo
-#define WaterFlowSensor 5
+#define WaterFlowSensor 5 //Porta D1 do nodemcu GPIO5
 //Define pino do rele
-#define rele 4
+#define rele 4 // Porta D2 do nodemcu GPIO4
 //constantes e variáveis globais
-char EnderecoAPIThingSpeak[] = "api.thingspeak.com";
+char EnderecoAPIThingSpeak[] = "api.thingspeak.com"; 
 String ChaveEscritaThingSpeak = "D7QFC5Z4B1QEF4TX";
 long lastConnectionTime;
 WiFiClient client;
 float UmidadePercentual;
+int Turbine;
 
 //prototypes
 void EnviaInformacoesThingspeak(String StringDados);
@@ -33,6 +34,7 @@ void StopConThingspeak(void);
 ESP8266WebServer server(80);
 void PaginaWeb(void);
 void ControlRele(void);
+void rpm(void);
 //float FazLeituraFluxo(void);
 /*
  * Implementações
@@ -70,6 +72,10 @@ void StopConThingspeak(void){
       Serial.println();
   }
 }
+void rpm () 	 //Function interrupt call
+{
+Turbine++; //Function measures the incrementing falling edge
+}
 void ControlRele(void){
   if (UmidadePercentual<=50)
   {
@@ -83,11 +89,10 @@ void ControlRele(void){
 //Pagina principal HTML
 void PaginaWeb(void)
 {
-  String recebe=String(UmidadePercentual, DEC);
   // HTML da pagina principal
   String html ="<!DOCTYPE HTML>\r\n<html>\r\n";
   html += "<h3>ESP8266 Servidor Web - TCC</h3>";
-//  html += "<p>LED <a href=\"?function=rele1_on\"><button>LIGA</button></a><a href=\"?function=rele1_off\"><button>DESLIGA</button></a></p>";
+  //html += "<p>LED <a href=\"?function=rele1_on\"><button>LIGA</button></a><a href=\"?function=rele1_off\"><button>DESLIGA</button></a></p>";
   html += "<head><title>Automacao de irrigacao</title></head>";
   html += "<body>";
   html += "<p>Umidade é:</p>";
@@ -155,23 +160,27 @@ float FazLeituraUmidade(void)
      Serial.print("[Umidade Percentual] ");
      Serial.print(UmidadePercentual);
      Serial.println("%");
-
      return UmidadePercentual;
 }
 void GeraLeitura(void){
+  int Calc;
   float UmidadePercentualLida;
   int UmidadePercentualTruncada;
   char FieldUmidade[11];
+  char FieldWaterSensor[11];
   //Força desconexão ao ThingSpeak (se ainda estiver desconectado)
   StopConThingspeak();
   UmidadePercentualLida = FazLeituraUmidade();
   UmidadePercentualTruncada = (int)UmidadePercentualLida; //trunca umidade como número inteiro
+  Calc = (Turbine * 60 / 7.5); //PULSE multiply by 60 divided by 7.5Q, equal FLOW RATE in L / hour
+  Serial.print(Calc, DEC); //Show the number calculated above to communication port
+  Serial.print(" L/hour\r\n"); //Prints L / hour & returns a new li
   //verifica se está conectado no WiFi e se é o momento de enviar dados ao ThingSpeak
   if(!client.connected() &&
     (millis() - lastConnectionTime > INTERVALO_ENVIO_THINGSPEAK))
   {
       sprintf(FieldUmidade,"field1=%d",UmidadePercentualTruncada);
-      sprintf(FieldWaterSensor,"field2=%d",UmidadePercentualTruncada);
+      sprintf(FieldWaterSensor,"field2=%d",Calc);
       String postStr = ChaveEscritaThingSpeak;
              postStr += "&amp;";
              postStr += FieldUmidade;
@@ -179,8 +188,10 @@ void GeraLeitura(void){
              postStr += FieldWaterSensor;
       EnviaInformacoesThingspeak(postStr);
       Serial.println(postStr);
+
   }
 }
+
 
 void setup()
 {
@@ -191,7 +202,7 @@ void setup()
     pinMode(rele, OUTPUT);
     digitalWrite(rele, LOW);
     pinMode(WaterFlowSensor, INPUT);
-    digitalWrite(WaterFlowSensor, HIGH);
+    attachInterrupt(WaterFlowSensor, rpm, RISING); //interrupt is attached
     // Atribuindo urls para funções
     server.on("/", PaginaWeb);
     //inicia o server web
@@ -203,6 +214,10 @@ void setup()
 //loop principal
 void loop()
 {
+     Turbine = 0;
+     sei();
+     delay(1000);
+     cli();
      GeraLeitura();
      server.handleClient();
      delay(1000);
