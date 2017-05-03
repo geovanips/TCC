@@ -1,1 +1,40 @@
 
+<!DOCTYPE html>
+<html>
+<head lang="pt-br">
+	<meta charset="utf-8">
+	<title>Teste Subscribe</title>
+  <h1>Sistema Automatizado para irrigação</h1>
+</head>
+<body>
+  <div id="Valor_Topicos"></div>
+      Umidade: <div id="Topico1" style="display:inline"></div>
+      <br>Vazao: <div id="Topico2" style="display:inline"></div>
+	<br><input type="button" name="sub" id="sub" value="Conectar">
+	<script src="classes\mqttws31.js"></script>
+	<script src="classes\clientMQTT.js"></script>
+	<script type="text/javascript">
+		//inicia a conexão do cliente
+		init();
+    function sub(){
+      var topico = ('Umidade');//select.options[select.selectedIndex].va
+					//cliente faz o subscribe no tópico
+			client.subscribe(topico);
+      var topico = ('vazao');
+      client.subscribe(topico);
+      client.onMessageArrived = function (message) {
+        if (message.destinationName=="Umidade"){
+            document.getElementById("Topico1").innerHTML=(message.payloadString)
+        }
+        else {
+            document.getElementById("Topico2").innerHTML=(message.payloadString)
+        }
+      };
+    }
+		var btnSub = document.getElementById("sub");
+		//adiciona o evento click no botão
+		btnSub.addEventListener("click", sub);
+	</script>
+
+</body>
+</html>
