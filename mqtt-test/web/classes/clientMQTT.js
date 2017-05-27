@@ -8,7 +8,7 @@ client.onConnectionLost = function (responseObject) {
 	console.log("Status: " + responseObject.errorMessage);
 };
 client.onMessageArrived = function (message) {
-	console.log('Tópico: ', message.destinationName, ' | Mensagem: ', message.payloadString);	
+	console.log('Tópico: ', message.destinationName, ' | Mensagem: ', message.payloadString);
 };
 var options = {
 	timeout: 3,
