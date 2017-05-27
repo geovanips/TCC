@@ -1,0 +1,120 @@
+div#botaoStatusRele{
+	padding: 2% 2% 2% 2%;
+  color: #ffffff;
+  font-size: 100%;
+  text-align: center;
+  display: flex;
+  border-radius: 5%;
+
+}
+div#btnrele{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+.botaoReleLigado{
+  background: #5cb811;
+}
+
+.botaoReleDesligado{
+  background: #ce0100;
+}
+
+
+body {
+  font-family: helvetica;
+  background-color: #ddd;
+  padding: 1%;
+}
+
+header{
+    color: lightyellow;
+    background: #4c6580;
+  }
+
+header{
+    text-align: center;
+    padding: 10px;
+    margin-left: 0;
+    background-size: 80%;
+    font-size: 120%;
+/*    display: inline-block;*/
+  }
+
+h2{
+    text-align: center;
+    color: lightyellow;
+    background: #7998b9;
+    padding: 1% 1% 1% 3%;;
+
+}
+div#container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+	min-width: 310px;
+	max-width: 800px;
+	height: 400px;
+	margin: 0 auto;
+}
+div#valorTopicos{
+	padding-top: 2%;
+	margin-left: 1%;
+	display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+div#Umidade{
+	padding: 2% 2% 2% 2%;
+  color: #ffffff;
+  font-size: 100%;
+  text-align: center;
+  display: inline-block;
+  border-radius: 5%;
+	background-color: #80b5ea;
+	margin-right: 10px;
+}
+div#Vazao{
+	padding: 2% 2% 2% 2%;
+  color: #ffffff;
+  font-size: 100%;
+  text-align: center;
+  display: inline-block;
+  border-radius: 5%;
+	background-color: #80b5ea;
+	margin-left: 10px;
+}
+img{
+    width: 10%;
+    padding: 1%;
+  }
+
+  .half{
+
+    width: 45%;
+    display: inline-block;
+    float: left;
+    margin-right: 2%;
+  }
+
+  .whole{
+    font-weight: bold;
+    align-items: center;
+    clear:both;
+ }
+.dig{
+  padding: 5% 5% 5% 5%;
+}
+
+.hide{
+  opacity:0;
+}
+footer{
+    font-size: 80%;
+    background: #7998b9;
+    text-align: center;
+    color: lightyellow;
+  }
