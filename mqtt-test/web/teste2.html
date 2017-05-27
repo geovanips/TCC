@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head lang="pt-br">
+	<meta charset="utf-8">
+	<title>Teste Subscribe</title>
+	<header>
+  	<h1>Sistema Automatizado para irrigação</h1>
+	</header>
+<link href="_css/style.css" type="text/css" rel="stylesheet"/>
+</head>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js'></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="classes\mqttws31.js"></script>
+<script src="classes\clientMQTT.js"></script>
+<script src="classes\jsIrrigacao2.js"></script>
+<body>
+  <div id="valorTopicos">
+      Umidade: <div id="Topico1" style="display:inline"></div>
+      <br>Vazao: <div id="Topico2" style="display:inline"></div>
+	</div>
+	<section class="whole">
+		<h2>Status do Relê</h2>
+		<span id="botaoStatusRele" class="botaoReleDesligado">Desligado</span>
+	</section>
+	<!--<br><input type="button" name="sub" id="sub" value="Conectar">-->
+	<section class="whole">
+			<h2>Sensores</h2>
+			<div id="chart_div"></div>
+			<div id="container" style="height: 400px; min-width: 310px"></div>
+	</section>
+
+	<script type="text/javascript">
+		init();
+		$(document).ready(function () {
+				Highcharts.setOptions({
+						global: {
+								useUTC: false
+						}
+				});
+
+				Highcharts.chart('container', {
+						chart: {
+								type: 'spline',
+								animation: Highcharts.svg, // don't animate in old IE
+								marginRight: 10,
+								events: {
+										load: function () {
+
+												// set up the updating of the chart each second
+												var series = this.series[0];
+												setInterval(function () {
+														var x = (new Date()).getTime().topico_umidade, // current time
+																y = topico_umidade[i];
+														series.addPoint([x, y], true, true);
+												}, 1000);
+										}
+								}
+						},
+						title: {
+								text: 'Valores de Umidade'
+						},
+						xAxis: {
+								type: 'datetime',
+								tickPixelInterval: 150
+						},
+						yAxis: {
+								title: {
+										text: 'Value'
+								},
+								plotLines: [{
+										value: topico_umidade[i],
+										width: Math.max.apply(null,topico_umidade),
+										color: '#808080'
+								}]
+						},
+						tooltip: {
+								formatter: function () {
+										return '<b>' + this.series.name + '</b><br/>' +
+												Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+												Highcharts.numberFormat(this.y, 2);
+								}
+						},
+						legend: {
+								enabled: false
+						},
+						exporting: {
+								enabled: false
+						},
+						series: [{
+								name: 'Umidade',
+								data: (function () {
+										// generate an array of random data
+										var data = [],
+												time = (new Date()).getTime(),
+												j;
+
+										for (j = -19; j <= 0; j += 1) {
+												data.push({
+														x: time + j * 1000,
+														y: [0,100]
+												});
+										}
+										return data;
+								}())
+						}]
+				});
+		});
+	</script>
+</body>
+<div id="rodape">
+				<footer>
+					<p>
+						Copyrigth&copy 2017 - Geovani Pereira da Silva <br/>
+						geovanips@outlook.com | (84)98893-1989
+					</p>
+				</footer>
+</html>

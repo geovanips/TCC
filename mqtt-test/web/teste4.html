@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="pt-br">
+	<meta charset="utf-8">
+	<title>Teste Subscribe</title>
+	<header>
+  	<h1>Sistema Automatizado para irrigação</h1>
+	</header>
+<link href="_css/style1.css" type="text/css" rel="stylesheet"/>
+</head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="classes\mqttws31.js"></script>
+<script src="classes\clientMQTT.js"></script>
+<script src="classes\jsIrrigacao3.js"></script>
+<body>
+  <div id="valorTopicos">
+      <div id="Umidade"> Umidade: <div id="Topico1" style="display:inline"></div></div>
+      <div id="Vazao"> Vazao: <div id="Topico2" style="display:inline"></div></div>
+	</div>
+	<section class="whole">
+		<h2>Status do Rele</h2>
+		<div id="btnrele">
+			<div id="botaoStatusRele" class="botaoReleDesligado">Desligado</div>
+		</div>
+	</section>
+	<section class="whole">
+			<h2>Sensores</h2>
+      <body onload="init();"><!--Inicia script javascript-->
+      <div id="container"></div><!-- Div para por o grafico-->
+</body>
+<div id="rodape">
+				<footer>
+					<p>
+						Copyrigth&copy 2017 - Geovani Pereira da Silva <br/>
+						geovanips@outlook.com | (84)98893-1989
+					</p>
+				</footer>
+</html>
