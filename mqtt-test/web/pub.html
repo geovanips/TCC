@@ -1,0 +1,64 @@
+<DOCTYPE html>
+<html>
+<head lang="pt-br">
+	<meta charset="utf-8">
+	<title>Teste Publish</title>
+</head>
+<body>
+	<h2>Teste Publish via Web</h2>
+	<form id="form_pub">
+		<fieldset>
+		<legend>Publish: </legend>
+			Tópico:
+			<select name="topicos" id="topicos">
+				<option value="Umidade">Umidade</option>
+				<option value="vazao">vazao</option>
+				<option value="statusrele">statusrele</option>
+				<option value="4">Tópico 04</option>
+			</select> <br>
+			Mensagem: <br>
+			<textarea roWs="4" cols="30" name="msg" id="msg"></textarea> <br>
+
+			<input type="button" name="pub" id="pub" value="Publish">
+		</fieldset>
+	</form>
+
+	<script src="classes\mqttws31.js"></script>
+	<script src="classes\clientMQTT.js"></script>
+	<script type="text/javascript">
+		//inicia a conexão do cliente
+		init();
+		//função publish
+		function pub(){
+			//pega o valor do elemento selecionado na tag select
+			var select = document.getElementById('topicos');
+			var topico = select.options[select.selectedIndex].value;
+
+			//cliente faz o subscribe no tópico - não é obrigatório, fiz só pra acompanhar as mensagens via console
+			client.subscribe(topico);
+
+			//pega o valor do input  da mensagem através do id
+			var mensagem = document.getElementById('msg').value;
+
+			//cria a nova mensagem a ser enviada para o broker
+			sub = new Paho.MQTT.Message(mensagem);
+
+			//diz para qual tópico a mensagem vai ser enviada
+			sub.destinationName = topico;
+
+			//faz o publish da mensagem
+			client.send(sub);
+		}
+		//função para limpar o campo da mensagem quando for publicada
+		function cleanForm(){
+			document.getElementById('msg').value='';
+		}
+
+		var btn = document.getElementById("pub");
+		//adiciona o evento click no botão
+		btn.addEventListener("click", pub);
+		//btn.addEventListener("click", cleanForm);
+	</script>
+
+</body>
+</html>
